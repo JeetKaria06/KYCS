@@ -9,5 +9,5 @@ Just follow the instructions written in the top left corner of the [page](https:
 
 The instructions look something like this:
 <br>
-![Output1](https://github.com/JeetKaria06/KYCS/blob/master/Images/poster.png) 
+![Output1](https://github.com/JeetKaria06/KYCS/blob/master/Images/learn.jpg) 
 
