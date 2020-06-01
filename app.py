@@ -17,7 +17,6 @@ import multidict
 from PIL import Image
 from io import BytesIO
 import base64
-import iconfonts
 
 
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
