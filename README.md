@@ -8,5 +8,6 @@ I have created certain [CodeForces](https://codeforces.com/) submission visualiz
 Just follow the instructions written in the top left corner of the [page](https://kycs.herokuapp.com/) when the app gets lauched from the web. 
 
 The instructions look something like this:
+<br>
 ![Output1](https://github.com/JeetKaria06/KYCS/blob/master/Images/poster.png) 
 
