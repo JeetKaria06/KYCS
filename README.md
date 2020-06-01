@@ -11,3 +11,5 @@ The instructions look something like this:
 <br>
 ![Output1](https://github.com/JeetKaria06/KYCS/blob/master/Images/learn.jpg) 
 
+It's damn easy, don't you feel the same? Now go on and explore ;)
+
