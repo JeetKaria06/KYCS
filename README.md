@@ -11,7 +11,7 @@ The instructions look something like this:
 <br>
 <br>
 ![Output1](https://github.com/JeetKaria06/KYCS/blob/master/Images/learn.jpg) 
-
+<br>
 It's damn easy, don't you feel the same? Now go on and explore ;)
 <br>
 <br>
