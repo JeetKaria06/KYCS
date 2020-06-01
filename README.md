@@ -14,4 +14,4 @@ The instructions look something like this:
 It's damn easy, don't you feel the same? Now go on and explore ;)
 <br>
 <br>
-![Output2[(https://github.com/JeetKaria06/KYCS/blob/master/Images/Enjoy.gif)
+![Output2](https://github.com/JeetKaria06/KYCS/blob/master/Images/Enjoy.gif)
