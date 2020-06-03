@@ -17,10 +17,14 @@ import multidict
 from PIL import Image
 from io import BytesIO
 import base64
+import iconfonts
+# import flask
 
 
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-external_stylesheets = [dbc.themes.DARKLY]
+we = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+external_stylesheets = dbc.themes.DARKLY
+# server = flask.Flask(__name__)
 
 colors = {
     'background': '#222',
@@ -28,8 +32,7 @@ colors = {
     'warn': '#FFFF00',
     'dimInput': '#696969'
 }
-
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+app = dash.Dash(__name__, external_stylesheets=[external_stylesheets, we])
 server = app.server
 app.layout = html.Div(id='main', children=[ 
     html.Div(id='hell', children=[
@@ -59,7 +62,9 @@ app.layout = html.Div(id='main', children=[
 
     html.Center(html.Button('Submit', type="button", className="btn btn-outline-info", id='submit-val', n_clicks=0)),
     # html.Div(id='fig'),
-    html.Center(html.Div(className='badge badge-danger',id="my-div", children='')),
+    dcc.Loading(id = "load", 
+        children=[html.Center(html.Div(className='badge badge-danger',id="my-div", children=''))], type="default", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
+    html.Br(),
     html.Br(),
     html.H3(
         children='Submission Distribution Verdictwise',
@@ -68,7 +73,8 @@ app.layout = html.Div(id='main', children=[
         },
         className="text-info"
     ),
-    dcc.Graph(id='fig0'),
+    dcc.Loading(id = "loading0", 
+        children=[html.Div(dcc.Graph(id='fig0'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
         children='Submission Distribution Verdict+Ratingwise',
@@ -77,7 +83,8 @@ app.layout = html.Div(id='main', children=[
         },
         className="text-info"
     ),
-    dcc.Graph(id='fig'),
+     dcc.Loading(id = "loading", 
+            children=[html.Div(dcc.Graph(id='fig'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
         html.H3(
         children='Submission Distribution Tags+Verdictwise',
@@ -86,7 +93,8 @@ app.layout = html.Div(id='main', children=[
         },
         className="text-info"
     ),
-    dcc.Graph(id='fig-1'),
+     dcc.Loading(id = "loading-1", 
+            children=[html.Div(dcc.Graph(id='fig-1'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
         children='Submission Distribution Tags+Verdict+Ratingwise',
@@ -95,7 +103,8 @@ app.layout = html.Div(id='main', children=[
         },
         className="text-info"
     ),
-    dcc.Graph(id='fig1'),
+     dcc.Loading(id = "loading1", 
+            children=[html.Div(dcc.Graph(id='fig1'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
         children='WordClound of the tags based on your Submissions',
@@ -105,7 +114,8 @@ app.layout = html.Div(id='main', children=[
         className="text-info"
     ),
     html.Br(),
-    html.Center(html.Img(id="image_wc", style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'})),
+    dcc.Loading(id = "loadingimg", 
+            children=[html.Center(html.Img(id="image_wc", style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.Br(),
     html.Center(
@@ -114,9 +124,13 @@ app.layout = html.Div(id='main', children=[
             children=[
                 html.H1('developed by [ Jeet_Karia ]'),
                 html.Br(),
-                dbc.Button('GitHub', id='gb', className="btn btn-primary btn-lg", href='https://github.com/JeetKaria06', style={'max-width':'15%'}),
-                dbc.Button('LinkedIN', id='ln', className="btn btn-primary btn-lg", href='https://www.linkedin.com/in/jeet-karia-628773170/', style={'max-width':'15%', 'backgroundColor':'#0072b1'}),
-                dbc.Button('Instagram', id='ig', className="btn btn-primary btn-lg", href='https://www.instagram.com/karia_jeet/', style={'max-width':'15%', 'backgroundColor':'#bc2a8d'})
+                dbc.Button(' GitHub', className='fa fa-github', size='lg',href='https://github.com/JeetKaria06', style={'backgroundColor':'#000000', 'width':'10%'}),
+                html.Br(),
+                dbc.Button(' LinkedIN', className='fa fa-linkedin', size='lg',href='https://linked.com/JeetKaria06', style={'backgroundColor':'#2867B2', 'width':'10%'}),
+                html.Br(),
+                dbc.Button(' Instagram', className='fa fa-instagram', size='lg',href='https://instagram.com/karia_jeet', style={'backgroundColor':'#C13584', 'width':'10%'}),
+                html.Br(),
+                dbc.Button(' Facebook', className='fa fa-facebook', size='lg', href='https://www.facebook.com/profile.php?id=100006146385849', style={'backgroundColor':'#4267B2', 'width':'10%'})
             ]
         )
     )
@@ -226,21 +240,21 @@ def update_header(n_clicks, input_value):
                         )
 
 @app.callback(
-    Output('image_wc', 'src'),
+    Output('loadingimg', 'children'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
 )
 def update_wc(n_clicks, input_value):
     handle=input_value
     if handle==None:
-        return ''
+        return html.Center(html.Img(id="image_wc", src='', style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return ""
+        return html.Center(html.Img(id="image_wc", src='', style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
 
     if(response.status_code==400):
-        return ""
+        return html.Center(html.Img(id="image_wc", src='', style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
         # exit()
 
     stat = response.json()['result']
@@ -292,11 +306,11 @@ def update_wc(n_clicks, input_value):
         wc_img.save(buffer, 'png')
         img2 = base64.b64encode(buffer.getvalue()).decode()
 
-    return 'data:image/png;base64,'+img2
+    return html.Center(html.Img(id="image_wc", src='data:image/png;base64,'+img2, style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
-    Output(component_id='fig0', component_property='figure'),
+    Output(component_id='loading0', component_property='children'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
     # [dash.dependencies.State(component_id='figures', component_property='children')]
@@ -305,7 +319,7 @@ def update_wc(n_clicks, input_value):
 def update_output_die(n_clicks, input_value):  # Only Verdict wise
     handle = input_value
     if handle==None:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -330,11 +344,12 @@ def update_output_die(n_clicks, input_value):  # Only Verdict wise
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig0'))
 
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -359,9 +374,10 @@ def update_output_die(n_clicks, input_value):  # Only Verdict wise
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig0'))
 
     if(response.status_code==400):
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -386,6 +402,7 @@ def update_output_die(n_clicks, input_value):  # Only Verdict wise
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig0'))
         # exit()
 
     stat = response.json()['result']
@@ -410,11 +427,11 @@ def update_output_die(n_clicks, input_value):  # Only Verdict wise
     fig = px.pie(dfSub, values='Number', names='verdict', color_discrete_sequence=px.colors.sequential.RdBu)
     fig.update_layout(uniformtext_minsize=18, uniformtext_mode='hide', plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'], font=dict(color=colors['text']))
-    return fig
+    return html.Div(dcc.Graph(figure=fig, id='fig0'))
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
-    Output(component_id='fig-1', component_property='figure'),
+    Output(component_id='loading-1', component_property='children'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
     # [dash.dependencies.State(component_id='figures', component_property='children')]
@@ -423,7 +440,7 @@ def update_output_die(n_clicks, input_value):  # Only Verdict wise
 def update_output_div(n_clicks, input_value):       # tag and verdict combined
     handle = input_value
     if handle==None:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -448,11 +465,12 @@ def update_output_div(n_clicks, input_value):       # tag and verdict combined
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig-1'))
 
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -477,9 +495,10 @@ def update_output_div(n_clicks, input_value):       # tag and verdict combined
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig-1'))
 
     if(response.status_code==400):
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -503,6 +522,7 @@ def update_output_div(n_clicks, input_value):       # tag and verdict combined
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig-1'))
         # exit()
 
     stat = response.json()['result']
@@ -550,11 +570,11 @@ def update_output_div(n_clicks, input_value):       # tag and verdict combined
     # fig.update_layout(uniformtext_minsize=18, uniformtext_mode='hide')
     fig.update_layout(margin = dict(l=0, r=0, b=0), plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'], font=dict(color=colors['text']))
-    return fig
+    return html.Div(dcc.Graph(figure=fig, id='fig-1'))
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
-    Output(component_id='fig1', component_property='figure'),
+    Output(component_id='loading1', component_property='children'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
     # [dash.dependencies.State(component_id='figures', component_property='children')]
@@ -564,7 +584,7 @@ def update_output_diven(n_clicks, input_value):       # tag, verdict and rating 
     handle = input_value
 
     if handle==None:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -589,11 +609,12 @@ def update_output_diven(n_clicks, input_value):       # tag, verdict and rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig1'))
 
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -618,9 +639,10 @@ def update_output_diven(n_clicks, input_value):       # tag, verdict and rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig1'))
 
     if(response.status_code==400):
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -644,6 +666,7 @@ def update_output_diven(n_clicks, input_value):       # tag, verdict and rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig1'))
         # exit()
 
     stat = response.json()['result']
@@ -691,11 +714,11 @@ def update_output_diven(n_clicks, input_value):       # tag, verdict and rating 
     # fig.update_layout(uniformtext_minsize=18, uniformtext_mode='hide')
     fig.update_layout(margin = dict(l=0, r=0, b=0), plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'], font=dict(color=colors['text']))
-    return fig
+    return html.Div(dcc.Graph(figure=fig, id='fig1'))
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
-    Output(component_id='fig', component_property='figure'),
+    Output(component_id='loading', component_property='children'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
 )
@@ -703,7 +726,7 @@ def update_output_dive(n_clicks, input_value):             # Verdict and Rating 
     handle = input_value
 
     if handle==None:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -728,11 +751,12 @@ def update_output_dive(n_clicks, input_value):             # Verdict and Rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig'))
 
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -757,9 +781,10 @@ def update_output_dive(n_clicks, input_value):             # Verdict and Rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig'))
 
     if(response.status_code==400):
-        return {
+        fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
                 "paper_bgcolor":colors['background'],
@@ -783,6 +808,7 @@ def update_output_dive(n_clicks, input_value):             # Verdict and Rating 
                 ]
             }
         }
+        return html.Div(dcc.Graph(figure=fig, id='fig'))
         # exit()
 
     stat = response.json()['result']
@@ -830,9 +856,9 @@ def update_output_dive(n_clicks, input_value):             # Verdict and Rating 
     fig = px.sunburst(dfSubRate, values='Number', path=['verdict', 'rating'], color_discrete_sequence=px.colors.sequential.RdBu)
     fig.update_layout(margin = dict(l=0, r=0, b=0), plot_bgcolor=colors['background'],
                 paper_bgcolor=colors['background'], font=dict(color=colors['text']))
-    return fig
+    return html.Div(dcc.Graph(figure=fig, id='fig'))
 @app.callback(
-    Output(component_id='my-div', component_property='children'),
+    Output(component_id='load', component_property='children'),
     # Output(component_id='fig1', component_property='figure'),
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
@@ -841,18 +867,18 @@ def update_output(n_clicks, input_value):               # Valid User
     handle = input_value
     
     if handle==None:
-        return "Enter the Handle :|"    
+        return html.Center(html.Div(className='badge badge-danger',id="my-div", children="Enter the Handle :|"))
 
     try:
         response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
     except requests.exceptions.RequestException as e:
-        return "Host Didn't responded!"    
+        return html.Center(html.Div(className='badge badge-danger',id="my-div", children="Host Didn't responded!"))    
 
     if(response.status_code==400):
-        return("No such user exists :( ")
+        return html.Center(html.Div(className='badge badge-danger',id="my-div", children="No such user exists :( "))
         # exit()
     else:
-        return("Handle is being loaded.")
+        return html.Center(html.Div(className='badge badge-danger',id="my-div", children="Handle is being loaded."))
 
 if __name__ == '__main__':
-    app.run_server(debug=False, dev_tools_ui=False, dev_tools_props_check=False)
+    app.run_server(debug=True)
