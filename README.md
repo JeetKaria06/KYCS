@@ -25,4 +25,4 @@ Added loading state animation and making it more user-friendly.
 
 And also bootstrapped the buttons' icons and making them look more pleasant than before.
 
-![Output4]((https://github.com/JeetKaria06/KYCS/blob/master/Images/buttons.png)
+![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/buttons.png)
