@@ -126,7 +126,7 @@ app.layout = html.Div(id='main', children=[
                 html.Br(),
                 dbc.Button(' GitHub', className='fa fa-github', size='lg',href='https://github.com/JeetKaria06', style={'backgroundColor':'#000000', 'width':'10%'}),
                 html.Br(),
-                dbc.Button(' LinkedIN', className='fa fa-linkedin', size='lg',href='https://linked.com/JeetKaria06', style={'backgroundColor':'#2867B2', 'width':'10%'}),
+                dbc.Button(' LinkedIN', className='fa fa-linkedin', size='lg',href='https://www.linkedin.com/in/jeet-karia-628773170/', style={'backgroundColor':'#2867B2', 'width':'10%'}),
                 html.Br(),
                 dbc.Button(' Instagram', className='fa fa-instagram', size='lg',href='https://instagram.com/karia_jeet', style={'backgroundColor':'#C13584', 'width':'10%'}),
                 html.Br(),
