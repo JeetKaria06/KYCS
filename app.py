@@ -18,6 +18,8 @@ from PIL import Image
 from io import BytesIO
 import base64
 import iconfonts
+import dash_dangerously_set_inner_html
+from datetime import datetime, date, timedelta
 # import flask
 
 
@@ -34,6 +36,9 @@ colors = {
 }
 app = dash.Dash(__name__, external_stylesheets=[external_stylesheets, we])
 server = app.server
+
+verdicts = set()
+finalData = {}
 app.layout = html.Div(id='main', children=[ 
     html.Div(id='hell', children=[
     html.H1(
@@ -107,6 +112,16 @@ app.layout = html.Div(id='main', children=[
             children=[html.Div(dcc.Graph(id='fig1'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
+        children='Average number of submissions with date on the x-axis',
+        style={
+            'textAlign': 'center'
+        },
+        className="text-info"
+    ),
+    dcc.Loading(id = "loading_Avg", 
+            children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
+    html.Br(),
+    html.H3(
         children='WordClound of the tags based on your Submissions',
         style={
             'textAlign': 'center'
@@ -116,6 +131,7 @@ app.layout = html.Div(id='main', children=[
     html.Br(),
     dcc.Loading(id = "loadingimg", 
             children=[html.Center(html.Img(id="image_wc", style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
+    # html.Center(dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''<div id='shareButton' class="fb-share-button" data-href="https://kycs.herokuapp.com/" data-layout="button_count" data-size="small"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https://kycs.herokuapp.com/;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>''')),
     html.Br(),
     html.Br(),
     html.Center(
@@ -136,6 +152,296 @@ app.layout = html.Div(id='main', children=[
     )
 ])
 ])
+
+@app.callback(
+    Output('loading_Avg', 'children'),
+    [Input('submit-val', 'n_clicks')],
+    [dash.dependencies.State('my-id', 'value')]
+)
+def show_avg(n_clicks, input_value): # Show Average
+    handle = input_value
+    if handle==None:
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "No matching Data found.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig))
+
+    try:
+        response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
+    except requests.exceptions.RequestException as e:
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "Codeforces can't be reached at a moment X( Try Again Later.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig))
+
+    if(response.status_code==400):
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "No such handle exists :(",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig))
+
+    stat = response.json()['result']
+
+    verdicts.clear()
+    mdict = {}
+
+    for submission in stat:
+        submissionsDate = datetime.utcfromtimestamp(int(submission['creationTimeSeconds']))
+        submissionsDate = date(submissionsDate.year, submissionsDate.month, submissionsDate.day)
+        pname = submission['problem']['name']
+        verdict = submission['verdict']
+        verdicts.add(verdict)
+        # print((date.today()-submissionsDate).days)
+        # print(submission)
+        # print(pname, submissionsDate, verdict)
+        
+        if str(submissionsDate) not in mdict.keys():
+            # print(submissionsDate)
+            mdict[str(submissionsDate)]={}
+        
+        if verdict not in mdict[str(submissionsDate)].keys():
+            # print(verdict)
+            mdict[str(submissionsDate)][verdict]=[]
+
+        # print()    
+        mdict[str(submissionsDate)][verdict].append(pname)
+
+    cnt=0
+    for dat in mdict.keys():
+        for verdict in mdict[dat].keys():
+            mdict[dat][verdict] = len(set(mdict[dat][verdict]))
+            if verdict=='OK':
+                cnt+=mdict[dat][verdict]
+
+    try:
+        response = requests.get("https://codeforces.com/api/user.info?handles="+handle)
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+
+    state = response.json()['result']
+    regDate = datetime.utcfromtimestamp(int(state[0]['registrationTimeSeconds']))
+    regDate = date(regDate.year, regDate.month, regDate.day)
+
+    tempDate = regDate
+    # global finalData = {}
+    finalData.clear()
+    totaldays=1
+    while tempDate<=date.today():
+        # if(tempDate==regDate):
+        # if tempDate not in mdict.keys():
+        # print(mdict[str(tempDate)])
+        finalData[str(tempDate)] = {}
+        # else:
+        for eachVerd in verdicts:
+            if tempDate==regDate:
+                if str(tempDate) not in mdict.keys():
+                    finalData[str(tempDate)][eachVerd] = 0
+                else:
+                    if eachVerd not in mdict[str(tempDate)].keys():
+                        finalData[str(tempDate)][eachVerd] = 0
+                    else:
+                        finalData[str(tempDate)][eachVerd] = mdict[str(tempDate)][eachVerd]
+            else:
+                if str(tempDate) not in mdict.keys():
+                    finalData[str(tempDate)][eachVerd] = 0
+                else:
+                    if eachVerd not in mdict[str(tempDate)].keys():
+                        finalData[str(tempDate)][eachVerd] = 0
+                    else:
+                        finalData[str(tempDate)][eachVerd] = mdict[str(tempDate)][eachVerd]
+
+        tempDate = tempDate + timedelta(days=1)
+    # return 
+    # html.Center(
+        # html.Div(children=[
+    return [
+            html.Br(),
+            html.Center(html.H4("Pick A Date Range", className="text-success")),
+            html.Center(dcc.DatePickerRange(
+                id='my-date-picker-range',
+                min_date_allowed=regDate,
+                max_date_allowed=date.today()+timedelta(days=1),
+                initial_visible_month=regDate,
+                end_date=date.today()
+            )),
+            html.Br(),
+            html.Br(),
+            html.Center(html.H4("Checked Options Will be Counted in the Average Calculation.", className="text-success")),
+            html.Center(dcc.Checklist(
+                id='checklist',
+                inputStyle={"margin-right": "7px", "margin-left":"22px"},
+                options=[{'label':ve, 'value':ve} for ve in verdicts],
+                value=list(verdicts),
+                labelStyle={'display': 'inline-block'},
+                className="custom-control custom-checkbox"
+                # labelClassName="custom-control-label"
+            )),
+            html.Br(),
+            html.Br(),  
+            html.Center(dcc.Loading(id = "loading_avg", 
+                children=[html.Div(dcc.Graph(id='fig_avg'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0})
+            )        
+    ]
+    # ))
+
+@app.callback(
+    Output(component_id='loading_avg', component_property='children'),
+    [Input('my-date-picker-range', 'start_date'),
+     Input('my-date-picker-range', 'end_date'),
+     Input('checklist', 'value')]
+)
+def update_output(start_date, end_date, value):
+    if(start_date==None):
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "Please Pick the Start Date.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig, id='fig_avg'))
+    year, month, day = map(int, start_date.split('-'))
+    date1 = date(year, month, day)
+
+    year, month, day = map(int, end_date.split('-'))
+    date2 = date(year, month, day)
+    
+    df = pd.DataFrame({'Date':[], 'Average':[]})
+
+    pad=1
+    sm=0
+    while date1<=date2:
+        for ve in verdicts:
+            if ve in value:
+                sm += (finalData[str(date1)][ve])
+        df = df.append({'Date':str(date1), 'Average':sm/pad}, ignore_index=True)
+        pad += 1
+        date1 += timedelta(days=1) 
+
+    # fig = go.Figure()
+    fig = go.Figure(go.Scatter(
+        x=list(df['Date']),
+        y=list(df['Average']),
+        # name='Average Accepted Submissions',
+        # line=dict(color='royalblue', width=4, dash='dot')
+        mode='lines+markers',
+        hovertemplate="<i>When?</i>   <b>%{x}</b>"+"<br><b><i>Avg Submissions:</i></b> %{y:.2f}"
+    ))
+    fig.update_layout(
+        xaxis=dict(
+            showline=True,
+            showgrid=False,
+            showticklabels=True,
+            linecolor='rgb(204, 204, 204)',
+            linewidth=2,
+            ticks='outside',
+            tickfont=dict(
+                family='Arial',
+                size=15,
+                color='white',
+            ),
+        ),
+        yaxis=dict(
+            showline=True,
+            showgrid=False,
+            showticklabels=True,
+            linecolor='rgb(204, 204, 204)',
+            linewidth=2,
+            ticks='outside',
+            tickfont=dict(
+                family='Arial',
+                size=15,
+                color='white',
+            ),
+        ),
+        plot_bgcolor='#222',
+        paper_bgcolor='#222'
+    )
+    return html.Div(dcc.Graph(figure=fig, id='fig_avg'))
 
 @app.callback(
     Output('header1', 'children'),
