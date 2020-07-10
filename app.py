@@ -18,7 +18,7 @@ from PIL import Image
 from io import BytesIO
 import base64
 import iconfonts
-import dash_dangerously_set_inner_html
+#import dash_dangerously_set_inner_html
 from datetime import datetime, date, timedelta
 # import flask
 
