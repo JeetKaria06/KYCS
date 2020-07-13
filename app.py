@@ -18,13 +18,14 @@ from PIL import Image
 from io import BytesIO
 import base64
 import iconfonts
-#import dash_dangerously_set_inner_html
+import dash_dangerously_set_inner_html
 from datetime import datetime, date, timedelta
 # import flask
 
 
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 we = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
+wet = "https://github.com/lipis/bootstrap-social/blob/gh-pages/bootstrap-social.css"
 external_stylesheets = dbc.themes.DARKLY
 # server = flask.Flask(__name__)
 
@@ -34,7 +35,8 @@ colors = {
     'warn': '#FFFF00',
     'dimInput': '#696969'
 }
-app = dash.Dash(__name__, external_stylesheets=[external_stylesheets, we])
+app = dash.Dash(__name__, external_stylesheets=[external_stylesheets, we, wet])
+app.title = 'KYCS - Know Your CodeForces Submissions'
 server = app.server
 
 verdicts = set()
@@ -69,6 +71,18 @@ app.layout = html.Div(id='main', children=[
     # html.Div(id='fig'),
     dcc.Loading(id = "load", 
         children=[html.Center(html.Div(className='badge badge-danger',id="my-div", children=''))], type="default", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
     html.Br(),
     html.Br(),
     html.H3(
@@ -122,6 +136,16 @@ app.layout = html.Div(id='main', children=[
             children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
+        children="Submissions Bifurcated based on Problem's Indices",
+        style={
+            'textAlign': 'center'
+        },
+        className="text-info"
+    ),
+    dcc.Loading(id = "loading_index", 
+            children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
+    html.Br(),
+    html.H3(
         children='WordClound of the tags based on your Submissions',
         style={
             'textAlign': 'center'
@@ -138,20 +162,247 @@ app.layout = html.Div(id='main', children=[
         html.Div(
             className='jumbotron',
             children=[
-                html.H1('developed by [ Jeet_Karia ]'),
+                html.H2('Developed By [ Jeet_Karia ]'),
                 html.Br(),
-                dbc.Button(' GitHub', className='fa fa-github', size='lg',href='https://github.com/JeetKaria06', style={'backgroundColor':'#000000', 'width':'10%'}),
-                html.Br(),
-                dbc.Button(' LinkedIN', className='fa fa-linkedin', size='lg',href='https://www.linkedin.com/in/jeet-karia-628773170/', style={'backgroundColor':'#2867B2', 'width':'10%'}),
-                html.Br(),
-                dbc.Button(' Instagram', className='fa fa-instagram', size='lg',href='https://instagram.com/karia_jeet', style={'backgroundColor':'#C13584', 'width':'10%'}),
-                html.Br(),
-                dbc.Button(' Facebook', className='fa fa-facebook', size='lg', href='https://www.facebook.com/profile.php?id=100006146385849', style={'backgroundColor':'#4267B2', 'width':'10%'})
+                dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
+                    
+                        <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/profile.php?id=100006146385849">
+                            <span class="fa fa-facebook"></span>
+                        </a>
+                        <a class="btn btn-social-icon btn-github" href="https://github.com/JeetKaria06">
+                            <span class="fa fa-github"></span>
+                        </a>
+                        <a class="btn btn-social-icon btn-instagram" href="https://instagram.com/karia_jeet">
+                            <span class="fa fa-instagram"></span>
+                        </a>
+                        <a class="btn btn-social-icon btn-linkedin" href="https://www.linkedin.com/in/jeet-karia-628773170/">
+                            <span class="fa fa-linkedin"></span>
+                        </a>
+                    
+                ''')
             ]
         )
     )
 ])
 ])
+
+@app.callback(
+    # Output(component_id='my-div', component_property='children'),
+    Output(component_id='loading_index', component_property='children'),
+    [Input(component_id='submit-val', component_property='n_clicks')],
+    [dash.dependencies.State(component_id='my-id', component_property='value')]
+    # [dash.dependencies.State(component_id='figures', component_property='children')]
+
+)
+def update_index(n_clicks, input_value):  # Index bar chart
+    handle = input_value
+    if handle==None:
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "No matching Data found.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig, id='fig_index'))
+
+    try:
+        response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
+    except requests.exceptions.RequestException as e:
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "Codeforces can't be reached at a moment X( Try Again Later.",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig, id='fig_index'))
+
+    if(response.status_code==400):
+        fig= {
+            "layout": {
+                "plot_bgcolor": colors['background'],
+                "paper_bgcolor":colors['background'],
+                "xaxis": {
+                    "visible": False
+                },
+                "yaxis": {
+                    "visible": False
+                },
+                "annotations": [
+                    {
+                        "text": "No such handle exists :(",
+                        "xref": "paper",
+                        "yref": "paper",
+                        "showarrow": False,
+                        "font": {
+                            "size": 28,
+                            "color": colors['warn']
+                        },
+                        "bgcolor": colors['background']
+                    }
+                ]
+            }
+        }
+        return html.Div(dcc.Graph(figure=fig, id='fig_index'))
+        # exit()
+
+    stat = response.json()['result']
+    color = ['#0dba2f', '#F4511E', '#4A148C',
+          'rgba(122, 120, 168, 0.8)', 'rgba(164, 163, 204, 0.85)',
+          'rgba(190, 192, 213, 1)']
+    
+    data = {}
+    totalData = {}
+    for submission in stat:
+        index = submission['problem']['index'][0]
+        pname = submission['problem']['name']
+        verdict = submission['verdict']
+
+        if verdict not in data.keys():
+            data[verdict] = {}
+
+        if index not in data[verdict].keys():
+            data[verdict][index] = set()
+        
+        data[verdict][index].add(pname)
+
+        if index not in totalData.keys():
+            totalData[index] = {}
+        if verdict not in totalData[index].keys():
+            totalData[index][verdict] = set()
+        
+        totalData[index][verdict].add(pname)
+    mx=0
+    for kes in totalData.keys():
+        cnt=0
+        for verdict in totalData[kes].keys():
+            totalData[kes][verdict] = len(totalData[kes][verdict])
+            cnt += totalData[kes][verdict]
+        totalData[kes] = cnt
+        mx = max(mx, cnt) 
+
+    fig = go.Figure()
+    i=0
+    for verds in data.keys():
+        arr = []
+        rate = []
+        for indices in sorted(data[verds].keys()):
+            data[verds][indices] = len(data[verds][indices])
+            arr.append(data[verds][indices])
+            rate.append(str(round(data[verds][indices]/totalData[indices]*100, 2)))
+
+        fig.add_trace(go.Bar(
+            x = list(sorted(data[verds].keys())),
+            y = arr,
+            width=0.6,
+            # height=20,
+            name = verds,
+            orientation = 'v',
+            marker = dict(
+                color = color[i%6],
+                line = dict(color='#222', width=0.5)
+            ),
+            showlegend = True,
+            # font=dict(color="white"),
+            text = rate,
+            hovertemplate = "Rate of <i>"+verds+"</i><br> %{text}<b> %</b> <br> Unique <i>"+verds+"</i> Submissions: %{y}",
+            # textposition='auto',
+            hoverlabel = dict(font=dict(size=23))
+        ))
+        i+=1        
+
+    fig.update_layout(
+            barmode='stack',
+            xaxis=dict(
+                showline=True,
+                showgrid=False,
+                showticklabels=True,
+                linecolor='rgb(204, 204, 204)',
+                linewidth=2,
+                ticks='outside',
+                tickfont=dict(
+                    family='Arial',
+                    size=25,
+                    color='white',
+                )
+            ),
+            yaxis=dict(
+                showline=True,
+                showgrid=False,
+                showticklabels=True,
+                linecolor='rgb(204, 204, 204)',
+                linewidth=2,
+                ticks='outside',
+                tickfont=dict(
+                    family='Arial',
+                    size=25,
+                    color='white',
+                ),
+            ),
+            height=800,
+            plot_bgcolor='#222',
+            paper_bgcolor='#222',
+            legend=dict(font=dict(color='white'))
+        )
+
+    for index in totalData.keys():
+        fig.add_annotation(
+            text=str(totalData[index]),
+            x=index,
+            y=totalData[index]+30*mx/800,
+            # font=dict(color='white', size=20),
+            showarrow=False,
+            font=dict(
+                family="Courier New, monospace",
+                size=20,
+                color="white"
+            ),
+            align="center",       
+            bordercolor="#3700B3",
+            borderwidth=2,
+            borderpad=2,
+            bgcolor="#121212",
+            opacity=1
+        )
+    
+    return html.Div(dcc.Graph(figure=fig, id='fig_index'))
 
 @app.callback(
     Output('loading_Avg', 'children'),
@@ -356,7 +607,7 @@ def show_avg(n_clicks, input_value): # Show Average
      Input('my-date-picker-range', 'end_date'),
      Input('checklist', 'value')]
 )
-def update_output(start_date, end_date, value):
+def update_output(start_date, end_date, value): #Avg Line chart
     if(start_date==None):
         fig= {
             "layout": {
@@ -475,7 +726,7 @@ def update_header(n_clicks, input_value):
                         )
 
     try:
-        response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
+        response = requests.get("https://codeforces.com/api/user.info?handles="+handle)
     except requests.exceptions.RequestException as e:
         # html.Div(id='')
         return html.Div(id='header', className='card text-white bg-danger mb-3', style={'max-width':'20%','position':'absolute', 'top':0}, 
@@ -532,6 +783,11 @@ def update_header(n_clicks, input_value):
                                     'color':colors['text']
                                 },
                             ),
+                            html.Img(
+                                className="card-img-top",
+                                src=response.json()['result'][0]['titlePhoto'],
+                                alt="Image doesn't exists"
+                            ),
                             html.Div(
                                 className='card-body',
                                 style={
@@ -540,6 +796,15 @@ def update_header(n_clicks, input_value):
                                 children=[
                                     html.H4('Enjoy the stay', className='card-title'),
                                     html.P("The handle is being loaded. If it misses out anything from below, then press submit again because sometimes dash misbehaves.",className='card-text')
+                                ]
+                            ),
+                            html.Div(
+                                className="card-footer",
+                                children=[
+                                    html.Small(
+                                        'Rank: ' + response.json()['result'][0]['rank'],
+                                        className="text-muted"
+                                    )
                                 ]
                             )
                             ]
