@@ -26,3 +26,18 @@ Added loading state animation and making it more user-friendly.
 And also bootstrapped the buttons' icons and making them look more pleasant than before.
 
 ![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/buttons.png)
+
+## Version 3
+<li> Average Submissions with date on the x-axis </li>
+
+One might want to analyze his/her own average number of submissions made per day in any given range of dates as shown below :
+
+![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/sd1.png)
+
+And can see the average submissions by hovering the mouse over the graph as shown :
+
+![Output5](https://github.com/JeetKaria06/KYCS/blob/master/Images/sd2.png)
+
+If one wants to see his/her only ```OK``` submissions then keep that checkbox selected and deselect the others will give you your desired graph.
+
+
