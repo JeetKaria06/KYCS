@@ -28,7 +28,7 @@ And also bootstrapped the buttons' icons and making them look more pleasant than
 ![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/buttons.png)
 
 ## Version 3
-<li> Average Submissions with date on the x-axis </li>
+<li> <h3>Average Submissions with date on the x-axis</h3> </li>
 
 One might want to analyze his/her own average number of submissions made per day in any given range of dates as shown below :
 
@@ -40,4 +40,8 @@ And can see the average submissions by hovering the mouse over the graph as show
 
 If one wants to see his/her only ```OK``` submissions then keep that checkbox selected and deselect the others will give you your desired graph.
 
+<li> <h3>Submissions Bifurcated based on Problem's Indices </h3></li>
 
+Number of submissions of particular index with particular verdict and even the rate of submitting the particular verdict submission of some index, all in one. Below is shown how :
+
+![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/rate.png)
