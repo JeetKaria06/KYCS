@@ -21,19 +21,15 @@ import iconfonts
 import dash_dangerously_set_inner_html
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import *
-# import flask
 
 
-# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 we = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
 we1 = 'https://use.fontawesome.com/releases/v5.8.2/css/all.css'
 we2 = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
 we3 = 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'
 we4 = 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.0/css/mdb.min.css'
 we5 = 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
-# wet = "https://github.com/lipis/bootstrap-social/blob/gh-pages/bootstrap-social.css"
 external_stylesheets = dbc.themes.DARKLY
-# server = flask.Flask(__name__)
 
 sc1 = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'
 sc2 = 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js'
