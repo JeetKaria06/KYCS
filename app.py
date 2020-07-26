@@ -20,48 +20,96 @@ import base64
 import iconfonts
 import dash_dangerously_set_inner_html
 from datetime import datetime, date, timedelta
+from dateutil.relativedelta import *
 # import flask
 
 
 # external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 we = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
-wet = "https://github.com/lipis/bootstrap-social/blob/gh-pages/bootstrap-social.css"
+we1 = 'https://use.fontawesome.com/releases/v5.8.2/css/all.css'
+we2 = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
+we3 = 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'
+we4 = 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.0/css/mdb.min.css'
+we5 = 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
+# wet = "https://github.com/lipis/bootstrap-social/blob/gh-pages/bootstrap-social.css"
 external_stylesheets = dbc.themes.DARKLY
 # server = flask.Flask(__name__)
+
+sc1 = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'
+sc2 = 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js'
+sc3 = 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js'
+sc4 = 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.0/js/mdb.min.js'
+sc5 = 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js'
 
 colors = {
     'background': '#222',
     'text': '#fff',
-    'warn': '#FFFF00',
+    'warn': '#CF6679',
     'dimInput': '#696969'
 }
-app = dash.Dash(__name__, external_stylesheets=[external_stylesheets, we, wet])
+app = dash.Dash(__name__, external_stylesheets=[external_stylesheets], external_scripts=["https://buttons.github.io/buttons.js"])
 app.title = 'KYCS - Know Your CodeForces Submissions'
 server = app.server
 
 verdicts = set()
-finalData = {}
+
+months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
 app.layout = html.Div(id='main', children=[ 
+    html.Header([
+        dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
+            <script async defer src="https://buttons.github.io/buttons.js"></script>
+        ''')
+    ]),
     html.Div(id='hell', children=[
-    html.H1(
-        children='Welcome To [ KYCS ]',
-        style={
-            'textAlign': 'center',
-            'color': colors['text']
-        }
+    dbc.Navbar(
+        [
+            # html.A(
+                # Use row and col to control vertical alignment of logo / brand
+                dbc.Row(
+                    [
+                        # dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                        dbc.Col(dbc.NavbarBrand(className="", style={'color':'white'},children=[
+                            html.H4("Welcome To [ KYCS ]"),
+                            html.H5("Know Your CodeForces Submissions")
+                        ])),
+                    ],
+                ),
+                dbc.Row(
+                    [
+                        html.Div(children=[
+                            # dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
+                            #     <!-- Place this tag where you want the button to render. -->
+                            #     <iframe src="https://ghbtns.com/github-btn.html?user=JeetKaria06&repo=KYCS&type=star&count=false&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
+                            # '''),
+                            dbc.Button(html.Span(["Learn More", html.Img(src="https://image.flaticon.com/icons/svg/702/702797.svg")]), color="primary", id="open-xl")
+                        ], style={'margin-right':'15px'})
+                    ],
+                    className="ml-auto"
+                )
+                # html.Br(),
+                # dbc.Row(
+                #     [
+                #         # dbc.Col(html.Img(src=PLOTLY_LOGO, height="30px")),
+                #         dbc.Col(dbc.NavbarBrand(html.H5("Know Your CodeForces Submissions"), className="ml-2")),
+                #     ],
+                #     align="center",
+                #     # no_gutters=True,
+                # ),
+                # href="https://plot.ly",
+            # )
+            # dbc.NavbarToggler(id="navbar-toggler"),
+            # dbc.Collapse(search_bar, id="navbar-collapse", navbar=True),
+        ],
+        color="dark",
+        dark=True
     ),
-    html.Div(id='header1', 
-    children=[]
-    ),
-    html.H5(children='{ Know Your Codeforces Submission. }', style={
-        'textAlign': 'center',
-        'color': colors['text']
-    }),
     html.Br(),
     html.Br(),
-    
+    # html.Div(id='header1', children=[]),
     html.Center(
-        html.Div( children=[
+        html.Div(children=[
+        html.P('Enter Your Handle Below'),
         dbc.Input(id='my-id', placeholder='Enter Your Handle Here', type='text', style={'backgroundColor':colors['text'], 'max-width':'18rem'}),
         html.Br()
         ])
@@ -85,12 +133,17 @@ app.layout = html.Div(id='main', children=[
     html.Br(),
     html.Br(),
     html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
     html.H3(
         children='Submission Distribution Verdictwise',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
     dcc.Loading(id = "loading0", 
         children=[html.Div(dcc.Graph(id='fig0'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
@@ -98,9 +151,10 @@ app.layout = html.Div(id='main', children=[
     html.H3(
         children='Submission Distribution Verdict+Ratingwise',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
      dcc.Loading(id = "loading", 
             children=[html.Div(dcc.Graph(id='fig'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
@@ -108,9 +162,10 @@ app.layout = html.Div(id='main', children=[
         html.H3(
         children='Submission Distribution Tags+Verdictwise',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
      dcc.Loading(id = "loading-1", 
             children=[html.Div(dcc.Graph(id='fig-1'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
@@ -118,19 +173,21 @@ app.layout = html.Div(id='main', children=[
     html.H3(
         children='Submission Distribution Tags+Verdict+Ratingwise',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
      dcc.Loading(id = "loading1", 
             children=[html.Div(dcc.Graph(id='fig1'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
     html.Br(),
     html.H3(
-        children='Average number of submissions with date on the x-axis',
+        children='Submissions with Month on the x-axis',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
     dcc.Loading(id = "loading_Avg", 
             children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
@@ -138,9 +195,10 @@ app.layout = html.Div(id='main', children=[
     html.H3(
         children="Submissions Bifurcated based on Problem's Indices",
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
     dcc.Loading(id = "loading_index", 
             children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0}),
@@ -148,9 +206,10 @@ app.layout = html.Div(id='main', children=[
     html.H3(
         children='WordClound of the tags based on your Submissions',
         style={
-            'textAlign': 'center'
+            'textAlign': 'center',
+            'color': '#BB86FC'
         },
-        className="text-info"
+        # className="text-info"
     ),
     html.Br(),
     dcc.Loading(id = "loadingimg", 
@@ -162,29 +221,102 @@ app.layout = html.Div(id='main', children=[
         html.Div(
             className='jumbotron',
             children=[
-                html.H2('Developed By [ Jeet_Karia ]'),
-                html.Br(),
+                
                 dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
-                    
-                        <a class="btn btn-social-icon btn-facebook" href="https://www.facebook.com/profile.php?id=100006146385849">
+                        <a class="btn-social btn-facebook" href="https://www.facebook.com/profile.php?id=100006146385849">
                             <span class="fa fa-facebook"></span>
                         </a>
-                        <a class="btn btn-social-icon btn-github" href="https://github.com/JeetKaria06">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="btn-social btn-github" href="https://github.com/JeetKaria06">
                             <span class="fa fa-github"></span>
                         </a>
-                        <a class="btn btn-social-icon btn-instagram" href="https://instagram.com/karia_jeet">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="btn-social btn-instagram" href="https://instagram.com/karia_jeet">
                             <span class="fa fa-instagram"></span>
                         </a>
-                        <a class="btn btn-social-icon btn-linkedin" href="https://www.linkedin.com/in/jeet-karia-628773170/">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="btn-social btn-linkedin" href="https://www.linkedin.com/in/jeet-karia-628773170/">
                             <span class="fa fa-linkedin"></span>
                         </a>
-                    
-                ''')
+                '''),
+                html.Br(),
+                html.Br(),
+                dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
+                    <center><iframe src="https://ghbtns.com/github-btn.html?user=JeetKaria06&repo=KYCS&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
+                    </center>
+                '''),
+                html.Br(),
+                html.Br(),
+                dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''<h5> Developed by [ <a href="https://codeforces.com/profile/Jeet_Karia">Jeet_Karia</a> ]</h5>'''),
+            #    html.Center(dash_dangerously_set_inner_html.DangerouslySetInnerHTML('''
+            #         <iframe src="https://ghbtns.com/github-btn.html?user=JeetKaria06&repo=KYCS&type=star&count=false&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
+            #     '''))
             ]
         )
-    )
+    ),
+    dbc.Modal(
+        [
+            dbc.ModalHeader("[ KYCS ] Python App"),
+            dbc.ModalBody([
+                html.H3("What is this app about?"),
+                html.H5("This app lets you analyze your codeforces submissions and visualizing them in comman man's manner."),
+                html.H3("What makes it different than other apps/tools ?"),
+                html.H5("(i) Allows you to keep track of your average monthly submissions and even separating it on particular month."),
+                html.H5("(ii) Wordcloud makes one realize his/her go to domain for problem solving."),
+                html.H5("(iii) Interactive plots makes it different in the league."),
+                html.H5("(iv) Last but not the least is THE DARK USER-FRIENDLY THEME.")
+            ]),
+            dbc.ModalFooter(
+                dbc.Button("Close", id="close-xl", className="ml-auto", color="primary")
+            ),
+        ],
+        id="modal-xl",
+        size="xl",
+    ),
+    dcc.Loading(id = "loading_use", 
+            children=[
+                html.Div(
+                [
+                    dbc.Button(
+                        "Stuck? Press Me  : )", id="popover-target", style={'backgroundColor':'#FF7597', 'color':'#000'}
+                    ),
+                    dbc.Popover(
+                        [],
+                        id="popover",
+                        is_open=False,
+                        target="popover-target",
+                    ),
+                ],
+                style={'position':'fixed', 'top':200}
+            )],
+            type="circle", 
+            fullscreen=False,
+            debug=False,
+            style={'align':'center'}
+    ),
 ])
 ])
+
+
+@app.callback(
+    Output("popover", "is_open"),
+    [Input("popover-target", "n_clicks")],
+    [dash.dependencies.State("popover", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open
+
+@app.callback(
+    Output("modal-xl", "is_open"),
+    [Input("open-xl", "n_clicks"), Input("close-xl", "n_clicks")],
+    [dash.dependencies.State("modal-xl", "is_open")],
+)
+def toggle_modal(n1, n2, is_open):
+    if n1 or n2:
+        return not is_open
+    return is_open
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
@@ -411,7 +543,7 @@ def update_index(n_clicks, input_value):  # Index bar chart
 )
 def show_avg(n_clicks, input_value): # Show Average
     handle = input_value
-    if handle==None:
+    if handle == None:
         fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
@@ -440,7 +572,7 @@ def show_avg(n_clicks, input_value): # Show Average
         return html.Div(dcc.Graph(figure=fig))
 
     try:
-        response = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
+        response = requests.get("https://codeforces.com/api/user.info?handles="+handle)
     except requests.exceptions.RequestException as e:
         fig= {
             "layout": {
@@ -497,9 +629,20 @@ def show_avg(n_clicks, input_value): # Show Average
         }
         return html.Div(dcc.Graph(figure=fig))
 
-    stat = response.json()['result']
+    state = response.json()['result']
+    global regDate
+    regDate = datetime.utcfromtimestamp(int(state[0]['registrationTimeSeconds']))
+    regDate = date(regDate.year, regDate.month, regDate.day)
+
+    try:
+        responsen = requests.get("https://codeforces.com/api/user.status?handle="+handle+"&from=1")
+    except requests.exceptions.RequestException as e:
+        raise SystemExit(e)
+
+    stat = responsen.json()['result']
 
     verdicts.clear()
+    global mdict
     mdict = {}
 
     for submission in stat:
@@ -508,80 +651,66 @@ def show_avg(n_clicks, input_value): # Show Average
         pname = submission['problem']['name']
         verdict = submission['verdict']
         verdicts.add(verdict)
-        # print((date.today()-submissionsDate).days)
-        # print(submission)
-        # print(pname, submissionsDate, verdict)
         
-        if str(submissionsDate) not in mdict.keys():
-            # print(submissionsDate)
-            mdict[str(submissionsDate)]={}
+        if str(submissionsDate.month)+'-'+str(submissionsDate.year) not in mdict.keys():
+            mdict[str(submissionsDate.month)+'-'+str(submissionsDate.year)]={}
         
-        if verdict not in mdict[str(submissionsDate)].keys():
-            # print(verdict)
-            mdict[str(submissionsDate)][verdict]=[]
+        if verdict not in mdict[str(submissionsDate.month)+'-'+str(submissionsDate.year)].keys():
+            mdict[str(submissionsDate.month)+'-'+str(submissionsDate.year)][verdict]=[]
 
-        # print()    
-        mdict[str(submissionsDate)][verdict].append(pname)
+        mdict[str(submissionsDate.month)+'-'+str(submissionsDate.year)][verdict].append(pname)
 
     cnt=0
     for dat in mdict.keys():
         for verdict in mdict[dat].keys():
             mdict[dat][verdict] = len(set(mdict[dat][verdict]))
-            if verdict=='OK':
-                cnt+=mdict[dat][verdict]
-
-    try:
-        response = requests.get("https://codeforces.com/api/user.info?handles="+handle)
-    except requests.exceptions.RequestException as e:
-        raise SystemExit(e)
-
-    state = response.json()['result']
-    regDate = datetime.utcfromtimestamp(int(state[0]['registrationTimeSeconds']))
-    regDate = date(regDate.year, regDate.month, regDate.day)
-
-    tempDate = regDate
-    # global finalData = {}
-    finalData.clear()
-    totaldays=1
-    while tempDate<=date.today():
-        # if(tempDate==regDate):
-        # if tempDate not in mdict.keys():
-        # print(mdict[str(tempDate)])
-        finalData[str(tempDate)] = {}
-        # else:
-        for eachVerd in verdicts:
-            if tempDate==regDate:
-                if str(tempDate) not in mdict.keys():
-                    finalData[str(tempDate)][eachVerd] = 0
-                else:
-                    if eachVerd not in mdict[str(tempDate)].keys():
-                        finalData[str(tempDate)][eachVerd] = 0
-                    else:
-                        finalData[str(tempDate)][eachVerd] = mdict[str(tempDate)][eachVerd]
-            else:
-                if str(tempDate) not in mdict.keys():
-                    finalData[str(tempDate)][eachVerd] = 0
-                else:
-                    if eachVerd not in mdict[str(tempDate)].keys():
-                        finalData[str(tempDate)][eachVerd] = 0
-                    else:
-                        finalData[str(tempDate)][eachVerd] = mdict[str(tempDate)][eachVerd]
-
-        tempDate = tempDate + timedelta(days=1)
+    # print(mdict)
     # return 
     # html.Center(
         # html.Div(children=[
     return [
             html.Br(),
-            html.Center(html.H4("Pick A Date Range", className="text-success")),
-            html.Center(dcc.DatePickerRange(
-                id='my-date-picker-range',
-                min_date_allowed=regDate,
-                max_date_allowed=date.today()+timedelta(days=1),
-                initial_visible_month=regDate,
-                end_date=date.today()
+            html.Center(html.H4("Select starting Month and Year", className="text-success")),
+            html.Center(dbc.Select(
+                    id='start_month',
+                    options=[{'label': months[i], 'value': i } for i in range(12)],
+                    # searchable=True,
+                    className="mb-3",
+                    style={'width':'35%'}
+                )
+            ),
+            # html.Br(),
+            html.Center(dbc.Select(
+                id='start_year',
+                options=[{'label': i, 'value': i } for i in range(regDate.year, date.today().year+1)],
+                # searchable=True,
+                className="mb-3",
+                style={'width':'35%'}
+            )),
+            html.Center(html.H4("Select ending Month and Year", className="text-success")),
+            html.Center(dbc.Select(
+                id='end_month',
+                options=[{'label': months[i], 'value': i } for i in range(12)],
+                # searchable=True
+                className="mb-3",
+                style={'width':'35%'}
+            )),
+            # html.Br(),
+            html.Center(dbc.Select(
+                id='end_year',
+                options=[{'label': i, 'value': i } for i in range(regDate.year, date.today().year+1)],
+                # searchable=True,
+                className="mb-3",
+                style={'width':'35%'}
             )),
             html.Br(),
+            html.Center(html.H4("Choose a feature", className="text-success")),
+            html.Center(dbc.Select(
+                id='caf',
+                options=[{'label': 'Average Submissions', 'value': 0}, {'label': 'Cumulative Submissions', 'value': 1}, {'label': 'Individual Submissions', 'value': 2}],
+                className="mb-3",
+                style={'width':'35%'}
+            )),
             html.Br(),
             html.Center(html.H4("Checked Options Will be Counted in the Average Calculation.", className="text-success")),
             html.Center(dcc.Checklist(
@@ -596,19 +725,22 @@ def show_avg(n_clicks, input_value): # Show Average
             html.Br(),
             html.Br(),  
             html.Center(dcc.Loading(id = "loading_avg", 
-                children=[html.Div(dcc.Graph(id='fig_avg'), style={'height':'100%'})], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0})
-            )        
+                children=[], type="cube", fullscreen=False, debug=False, style={'position':'absolute', 'top':0})
+            )    
     ]
     # ))
 
 @app.callback(
     Output(component_id='loading_avg', component_property='children'),
-    [Input('my-date-picker-range', 'start_date'),
-     Input('my-date-picker-range', 'end_date'),
+    [Input('start_year', 'value'),
+     Input('start_month', 'value'), 
+     Input('end_year', 'value'), 
+     Input('end_month', 'value'),
+     Input('caf', 'value'),
      Input('checklist', 'value')]
 )
-def update_output(start_date, end_date, value): #Avg Line chart
-    if(start_date==None):
+def update_output(start_year, start_month, end_year, end_month, caf, value): #Avg Line chart
+    if(start_year==None or start_month==None or end_year==None or caf==None or end_month==None or (end_year < start_year or (end_year==start_year and end_month<start_month))):
         fig= {
             "layout": {
                 "plot_bgcolor": colors['background'],
@@ -621,7 +753,7 @@ def update_output(start_date, end_date, value): #Avg Line chart
                 },
                 "annotations": [
                     {
-                        "text": "Please Pick the Start Date.",
+                        "text": "Please Pick the Valid Range.",
                         "xref": "paper",
                         "yref": "paper",
                         "showarrow": False,
@@ -635,32 +767,66 @@ def update_output(start_date, end_date, value): #Avg Line chart
             }
         }
         return html.Div(dcc.Graph(figure=fig, id='fig_avg'))
-    year, month, day = map(int, start_date.split('-'))
-    date1 = date(year, month, day)
-
-    year, month, day = map(int, end_date.split('-'))
-    date2 = date(year, month, day)
     
-    df = pd.DataFrame({'Date':[], 'Average':[]})
+    start_month = int(start_month)
+    end_month = int(end_month)
+    
+    start_year = int(start_year)
+    end_year = int(end_year)
 
-    pad=1
-    sm=0
-    while date1<=date2:
-        for ve in verdicts:
-            if ve in value:
-                sm += (finalData[str(date1)][ve])
-        df = df.append({'Date':str(date1), 'Average':sm/pad}, ignore_index=True)
-        pad += 1
-        date1 += timedelta(days=1) 
+    start_month += 1
+    end_month += 1
+    # print('ola')
+    # print(mdict)
+    start = str(start_month)+'-'+str(start_year)
+    end = str(end_month)+'-'+str(end_year)
 
+    sdate = max(date(regDate.year, regDate.month, 1), date(start_year, start_month, 1))
+    edate = date(end_year, end_month, 1)
+    
+    dfplot = pd.DataFrame({'Month': [], 'Subs': []})
+    hola = ['Avg Subs', 'Cumulative Subs', 'Individual Subs']
+    cnt=0
+    subs=0
+    
+    while sdate<=min(edate, date(date.today().year, date.today().month, 1)):
+        sep=0
+        artkey = str(sdate.month)+'-'+str(sdate.year)
+        cnt+=1
+
+        if artkey not in mdict.keys():
+            mdict[artkey] = {}
+            for vs in verdicts:
+                mdict[artkey][vs] = 0
+        else:
+            for vs in verdicts:
+                if vs not in mdict[artkey].keys():
+                    mdict[artkey][vs]=0
+        
+        for vs in verdicts:
+            if vs in value:
+                sep += mdict[artkey][vs]
+                subs += mdict[artkey][vs]
+
+        if caf=='0':
+            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs/cnt}, ignore_index=True)
+        elif caf=='1':
+            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs}, ignore_index=True)
+        else:
+            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':sep}, ignore_index=True)
+
+        sdate += relativedelta(months=1)
+    # fig_final = make_subplots(rows=3, cols=1)
     # fig = go.Figure()
+
     fig = go.Figure(go.Scatter(
-        x=list(df['Date']),
-        y=list(df['Average']),
+        x=list(dfplot['Month']),
+        y=list(dfplot['Subs']),
         # name='Average Accepted Submissions',
         # line=dict(color='royalblue', width=4, dash='dot')
+        # font=dict(color='royalblue'),
         mode='lines+markers',
-        hovertemplate="<i>When?</i>   <b>%{x}</b>"+"<br><b><i>Avg Submissions:</i></b> %{y:.2f}"
+        hovertemplate="<i>When?</i>   <b>%{x}</b>"+"<br><b><i>"+hola[int(caf)]+":</i></b> %{y:.2f}"
     ))
     fig.update_layout(
         xaxis=dict(
@@ -692,10 +858,11 @@ def update_output(start_date, end_date, value): #Avg Line chart
         plot_bgcolor='#222',
         paper_bgcolor='#222'
     )
-    return html.Div(dcc.Graph(figure=fig, id='fig_avg'))
+
+    return html.Div(dcc.Graph(figure=fig, id='fig_avg'))    
 
 @app.callback(
-    Output('header1', 'children'),
+    Output('popover', 'children'),
     [Input('submit-val', 'n_clicks')],
     [dash.dependencies.State('my-id', 'value')]
 )
@@ -703,7 +870,7 @@ def update_header(n_clicks, input_value):
     handle = input_value
     returndivs = []
     if input_value==None:
-        return html.Div(id='header', className='card text-white bg-primary mb-3', style={'max-width':'20%','position':'absolute', 'top':0}, 
+        return html.Div(id='header', className='card text-white bg-primary mb-3', style={}, 
                         children=[html.Div(
                                 'Blue Card',
                                 className='card-header',
@@ -729,7 +896,7 @@ def update_header(n_clicks, input_value):
         response = requests.get("https://codeforces.com/api/user.info?handles="+handle)
     except requests.exceptions.RequestException as e:
         # html.Div(id='')
-        return html.Div(id='header', className='card text-white bg-danger mb-3', style={'max-width':'20%','position':'absolute', 'top':0}, 
+        return html.Div(id='header', className='card text-white bg-danger mb-3', style={}, 
                         children=[html.Div(
                                 'Red Card',
                                 className='card-header',
@@ -752,7 +919,7 @@ def update_header(n_clicks, input_value):
                         )
 
     if response.status_code==400:
-        return html.Div(id='header', className='card text-white bg-warning mb-3', style={'max-width':'20%','position':'absolute', 'top':0}, 
+        return html.Div(id='header', className='card text-white bg-warning mb-3', style={}, 
                         children=[html.Div(
                                 'Yellow Card',
                                 className='card-header',
@@ -774,7 +941,7 @@ def update_header(n_clicks, input_value):
                             ]
                         )
     else:
-        return html.Div(id='header', className='card text-white bg-success mb-3', style={'max-width':'20%','position':'absolute', 'top':0}, 
+        return html.Div(id='header', className='card text-white bg-success mb-3', style={}, 
                         children=[html.Div(
                                 'Green Card',
                                 className='card-header',
@@ -786,7 +953,8 @@ def update_header(n_clicks, input_value):
                             html.Img(
                                 className="card-img-top",
                                 src=response.json()['result'][0]['titlePhoto'],
-                                alt="Image doesn't exists"
+                                alt="Image doesn't exists",
+                                style = {}
                             ),
                             html.Div(
                                 className='card-body',
@@ -877,7 +1045,7 @@ def update_wc(n_clicks, input_value):
         wc_img.save(buffer, 'png')
         img2 = base64.b64encode(buffer.getvalue()).decode()
 
-    return html.Center(html.Img(id="image_wc", src='data:image/png;base64,'+img2, style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
+    return html.Center(html.Img(id="image_wc", src='data:image/png;base64,'+img2, alt="Enter Valid User Handle", style={'height':'50%', 'width':'50%', 'marginRight':'auto', 'marginLeft':'auto'}))
 
 @app.callback(
     # Output(component_id='my-div', component_property='children'),
@@ -885,7 +1053,6 @@ def update_wc(n_clicks, input_value):
     [Input(component_id='submit-val', component_property='n_clicks')],
     [dash.dependencies.State(component_id='my-id', component_property='value')]
     # [dash.dependencies.State(component_id='figures', component_property='children')]
-
 )
 def update_output_die(n_clicks, input_value):  # Only Verdict wise
     handle = input_value
