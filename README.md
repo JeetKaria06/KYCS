@@ -78,3 +78,10 @@ Selected category submissions are added from starting to ending month i.e. ```x`
 Submissions of selected category are shown separately for all the months between starting month and ending month.
 
 ![Output10](https://github.com/JeetKaria06/KYCS/blob/master/Images/indisubs.png)
+
+<h3> Bootstrapped Social Media Buttons </h3>
+
+Credits for Social Media Buttons:    (https://bootsnipp.com/snippets/3kQrB)[https://bootsnipp.com/snippets/3kQrB]
+Credits for GitHub Repo Star Button: (https://ghbtns.com/#star)[https://ghbtns.com/#star]
+
+![Output11](https://github.com/JeetKaria06/KYCS/blob/master/Images/bbutton.png)
