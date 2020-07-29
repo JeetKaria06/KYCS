@@ -51,7 +51,7 @@ Number of submissions of particular index with particular verdict and even the r
 The color combination is the thing which was taken care of in this version. Another thing that I have added is the learn more button and the Modal which is opened as shown
 ![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/lmore.png)
 
-This answers 2 major questions, '''What is this app about?''' and '''What makes it different from other apps/tools?'''.
+This answers 2 major questions, ```What is this app about?``` and ```What makes it different from other apps/tools?```.
 
 <h3> Submissions with Month on the x-axis </h3>
 
