@@ -45,3 +45,21 @@ If one wants to see his/her only ```OK``` submissions then keep that checkbox se
 Number of submissions of particular index with particular verdict and even the rate of submitting the particular verdict submission of some index, all in one. Below is shown how :
 
 ![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/rate.png)
+
+## Version 4 [ MAJOR UPDATE ]
+
+The color combination is the thing which was taken care of in this version. Another thing that I have added is the learn more button and the Modal which is opened as shown
+![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/lmore.png)
+
+This answers 2 major questions, '''What is this app about?''' and '''What makes it different from other apps/tools?'''.
+
+<h3> Submissions with Month on the x-axis </h3>
+
+The reason behind getting converted from date to months is 30 times lesser iterations. In dates the code was iterating all 365 days and when converted to months then it will become 12 iterations for a year. And also it allows you to understand a bigger picture as one might skip for a day or two but months are more effective to analyse your situation.
+
+Also there are 3 features added in it which are 
+<li> Average Submissions </li>
+<li> Cummulative Submissions </li>
+<li> Individual Submissions </li>
+
+![Output7](https://github.com/JeetKaria06/KYCS/blob/master/Images/selectavg.png)
