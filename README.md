@@ -20,21 +20,25 @@ It's damn easy, don't you feel the same? Now go on and explore ;)
 ## Version 2
 
 Added loading state animation and making it more user-friendly.
-
+<br>
+<br>
 ![Output3](https://github.com/JeetKaria06/KYCS/blob/master/Images/v2.gif)
 
 And also bootstrapped the buttons' icons and making them look more pleasant than before.
-
+<br>
+<br>
 ![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/buttons.png)
 
 ## Version 3
 <h3>Average Submissions with date on the x-axis</h3>
 
 One might want to analyze his/her own average number of submissions made per day in any given range of dates as shown below :
-
+<br>
+<br>
 ![Output4](https://github.com/JeetKaria06/KYCS/blob/master/Images/sd1.png)
 
-And can see the average submissions by hovering the mouse over the graph as shown :
+A<br>
+<br>nd can see the average submissions by hovering the mouse over the graph as shown :
 
 ![Output5](https://github.com/JeetKaria06/KYCS/blob/master/Images/sd2.png)
 
@@ -43,12 +47,15 @@ If one wants to see his/her only ```OK``` submissions then keep that checkbox se
 <h3>Submissions Bifurcated based on Problem's Indices </h3>
 
 Number of submissions of particular index with particular verdict and even the rate of submitting the particular verdict submission of some index, all in one. Below is shown how :
-
+<br>
+<br>
 ![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/rate.png)
 
 ## Version 4 [ MAJOR UPDATE ]
 
 The color combination is the thing which was taken care of in this version. Another thing that I have added is the learn more button and the Modal which is opened as shown
+<br>
+<br>
 ![Output6](https://github.com/JeetKaria06/KYCS/blob/master/Images/lmore.png)
 
 This answers 2 major questions, ```What is this app about?``` and ```What makes it different from other apps/tools?```.
@@ -61,27 +68,33 @@ Also there are 3 features added in it which are
 <li> Average Submissions </li>
 <li> Cummulative Submissions </li>
 <li> Individual Submissions </li>
-
+<br>
+<br>
 ![Output7](https://github.com/JeetKaria06/KYCS/blob/master/Images/selectavg.png)
 
 <h5> Average Submissions </h5>
 This averages the number of selected category submissions between the starting month selected and the ending month.
-
+<br>
+<br>
 ![Output8](https://github.com/JeetKaria06/KYCS/blob/master/Images/avgsubs.png)
 
 <h5> Cummulative Submissions </h5>
 Selected category submissions are added from starting to ending month i.e. ```x``` OK submissios in month1 then in month2 there will be month2 OK submissions + the submissions of all the previous months.
-
+<br>
+<br>
 ![Output9](https://github.com/JeetKaria06/KYCS/blob/master/Images/cumsubs.png)
 
 <h5> Individual Submissions </h5>
 Submissions of selected category are shown separately for all the months between starting month and ending month.
-
+<br>
+<br>
 ![Output10](https://github.com/JeetKaria06/KYCS/blob/master/Images/indisubs.png)
 
 <h3> Bootstrapped Social Media Buttons </h3>
 
-Credits for Social Media Buttons:    (https://bootsnipp.com/snippets/3kQrB)[https://bootsnipp.com/snippets/3kQrB]
-Credits for GitHub Repo Star Button: (https://ghbtns.com/#star)[https://ghbtns.com/#star]
-
+Credits for Social Media Buttons:    [ https://bootsnipp.com/snippets/3kQrB ] <br>
+<br>
+Credits for GitHub Repo Star Button: [ https://ghbtns.com/#star ]
+<br>
+<br>
 ![Output11](https://github.com/JeetKaria06/KYCS/blob/master/Images/bbutton.png)
