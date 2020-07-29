@@ -70,24 +70,28 @@ Also there are 3 features added in it which are
 <li> Individual Submissions </li>
 <br>
 <br>
+
 ![Output7](https://github.com/JeetKaria06/KYCS/blob/master/Images/selectavg.png)
 
 <h5> Average Submissions </h5>
 This averages the number of selected category submissions between the starting month selected and the ending month.
 <br>
 <br>
+
 ![Output8](https://github.com/JeetKaria06/KYCS/blob/master/Images/avgsubs.png)
 
 <h5> Cummulative Submissions </h5>
 Selected category submissions are added from starting to ending month i.e. ```x``` OK submissios in month1 then in month2 there will be month2 OK submissions + the submissions of all the previous months.
 <br>
 <br>
+
 ![Output9](https://github.com/JeetKaria06/KYCS/blob/master/Images/cumsubs.png)
 
 <h5> Individual Submissions </h5>
 Submissions of selected category are shown separately for all the months between starting month and ending month.
 <br>
 <br>
+
 ![Output10](https://github.com/JeetKaria06/KYCS/blob/master/Images/indisubs.png)
 
 <h3> Bootstrapped Social Media Buttons </h3>
@@ -97,4 +101,5 @@ Credits for Social Media Buttons:    [ https://bootsnipp.com/snippets/3kQrB ] <b
 Credits for GitHub Repo Star Button: [ https://ghbtns.com/#star ]
 <br>
 <br>
+
 ![Output11](https://github.com/JeetKaria06/KYCS/blob/master/Images/bbutton.png)
