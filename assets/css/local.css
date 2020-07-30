@@ -124,11 +124,11 @@ a.btn-social,
 }
 .btn-facebook
 {
-    background-color: #3b5998;
+    background-color: #4267B2;
 }
 .btn-facebook:hover
 {
-    background-color: #4c70ba;
+    background-color: #4267B2;
 }
 .btn-flickr
 {
@@ -148,11 +148,11 @@ a.btn-social,
 }
 .btn-github
 {
-    background-color: #4183c4;
+    background-color: #000;
 }
 .btn-github:hover
 {
-    background-color: #689cd0;
+    background-color: #000;
 }
 .btn-google-plus
 {
@@ -164,11 +164,11 @@ a.btn-social,
 }
 .btn-instagram
 {
-    background-color: #3f729b;
+    background-color: #C13584;
 }
 .btn-instagram:hover
 {
-    background-color: #548cb9;
+    background-color: #833AB4;
 }
 .btn-jsfiddle
 {
@@ -188,11 +188,11 @@ a.btn-social,
 }
 .btn-linkedin
 {
-    background-color: #0976b4;
+    background-color: #2867B2;
 }
 .btn-linkedin:hover
 {
-    background-color: #0b96e5;
+    background-color: #2867B2;
 }
 .btn-paypal
 {
