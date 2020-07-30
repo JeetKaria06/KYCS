@@ -21,15 +21,19 @@ import iconfonts
 import dash_dangerously_set_inner_html
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import *
+# import flask
 
 
+# external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 we = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'
 we1 = 'https://use.fontawesome.com/releases/v5.8.2/css/all.css'
 we2 = 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap'
 we3 = 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/css/bootstrap.min.css'
 we4 = 'https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.0/css/mdb.min.css'
 we5 = 'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
+# wet = "https://github.com/lipis/bootstrap-social/blob/gh-pages/bootstrap-social.css"
 external_stylesheets = dbc.themes.DARKLY
+# server = flask.Flask(__name__)
 
 sc1 = 'https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'
 sc2 = 'https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js'
@@ -48,6 +52,8 @@ app.title = 'KYCS - Know Your CodeForces Submissions'
 server = app.server
 
 verdicts = set()
+# regDate = ''
+mdict = {}
 
 months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
@@ -274,7 +280,7 @@ app.layout = html.Div(id='main', children=[
                 html.Div(
                 [
                     dbc.Button(
-                        "Stuck? Press Me  : )", id="popover-target", style={'backgroundColor':'#FF7597', 'color':'#000'}
+                        "Stuck? Press Me  : )", id="popover-target", style={'backgroundColor':'#405DE6', 'color':'#FFF'}
                     ),
                     dbc.Popover(
                         [],
@@ -638,8 +644,8 @@ def show_avg(n_clicks, input_value): # Show Average
     stat = responsen.json()['result']
 
     verdicts.clear()
-    global mdict
-    mdict = {}
+    # global mdict
+    mdict.clear()
 
     for submission in stat:
         submissionsDate = datetime.utcfromtimestamp(int(submission['creationTimeSeconds']))
@@ -764,98 +770,99 @@ def update_output(start_year, start_month, end_year, end_month, caf, value): #Av
         }
         return html.Div(dcc.Graph(figure=fig, id='fig_avg'))
     
-    start_month = int(start_month)
-    end_month = int(end_month)
-    
-    start_year = int(start_year)
-    end_year = int(end_year)
-
-    start_month += 1
-    end_month += 1
-    # print('ola')
-    # print(mdict)
-    start = str(start_month)+'-'+str(start_year)
-    end = str(end_month)+'-'+str(end_year)
-
-    sdate = max(date(regDate.year, regDate.month, 1), date(start_year, start_month, 1))
-    edate = date(end_year, end_month, 1)
-    
-    dfplot = pd.DataFrame({'Month': [], 'Subs': []})
-    hola = ['Avg Subs', 'Cumulative Subs', 'Individual Subs']
-    cnt=0
-    subs=0
-    
-    while sdate<=min(edate, date(date.today().year, date.today().month, 1)):
-        sep=0
-        artkey = str(sdate.month)+'-'+str(sdate.year)
-        cnt+=1
-
-        if artkey not in mdict.keys():
-            mdict[artkey] = {}
-            for vs in verdicts:
-                mdict[artkey][vs] = 0
-        else:
-            for vs in verdicts:
-                if vs not in mdict[artkey].keys():
-                    mdict[artkey][vs]=0
+    else:
+        start_month = int(start_month)
+        end_month = int(end_month)
         
-        for vs in verdicts:
-            if vs in value:
-                sep += mdict[artkey][vs]
-                subs += mdict[artkey][vs]
+        start_year = int(start_year)
+        end_year = int(end_year)
 
-        if caf=='0':
-            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs/cnt}, ignore_index=True)
-        elif caf=='1':
-            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs}, ignore_index=True)
-        else:
-            dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':sep}, ignore_index=True)
+        start_month += 1
+        end_month += 1
+        # print('ola')
+        # print(mdict)
+        start = str(start_month)+'-'+str(start_year)
+        end = str(end_month)+'-'+str(end_year)
 
-        sdate += relativedelta(months=1)
-    # fig_final = make_subplots(rows=3, cols=1)
-    # fig = go.Figure()
+        sdate = max(date(regDate.year, regDate.month, 1), date(start_year, start_month, 1))
+        edate = date(end_year, end_month, 1)
+        
+        dfplot = pd.DataFrame({'Month': [], 'Subs': []})
+        hola = ['Avg Subs', 'Cumulative Subs', 'Individual Subs']
+        cnt=0
+        subs=0
+        
+        while sdate<=min(edate, date(date.today().year, date.today().month, 1)):
+            sep=0
+            artkey = str(sdate.month)+'-'+str(sdate.year)
+            cnt+=1
 
-    fig = go.Figure(go.Scatter(
-        x=list(dfplot['Month']),
-        y=list(dfplot['Subs']),
-        # name='Average Accepted Submissions',
-        # line=dict(color='royalblue', width=4, dash='dot')
-        # font=dict(color='royalblue'),
-        mode='lines+markers',
-        hovertemplate="<i>When?</i>   <b>%{x}</b>"+"<br><b><i>"+hola[int(caf)]+":</i></b> %{y:.2f}"
-    ))
-    fig.update_layout(
-        xaxis=dict(
-            showline=True,
-            showgrid=False,
-            showticklabels=True,
-            linecolor='rgb(204, 204, 204)',
-            linewidth=2,
-            ticks='outside',
-            tickfont=dict(
-                family='Arial',
-                size=15,
-                color='white',
+            if artkey not in mdict.keys():
+                mdict[artkey] = {}
+                for vs in verdicts:
+                    mdict[artkey][vs] = 0
+            else:
+                for vs in verdicts:
+                    if vs not in mdict[artkey].keys():
+                        mdict[artkey][vs]=0
+            
+            for vs in verdicts:
+                if vs in value:
+                    sep += mdict[artkey][vs]
+                    subs += mdict[artkey][vs]
+
+            if caf=='0':
+                dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs/cnt}, ignore_index=True)
+            elif caf=='1':
+                dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':subs}, ignore_index=True)
+            else:
+                dfplot = dfplot.append({'Month':months[sdate.month-1]+" "+str(sdate.year), 'Subs':sep}, ignore_index=True)
+
+            sdate += relativedelta(months=1)
+        # fig_final = make_subplots(rows=3, cols=1)
+        # fig = go.Figure()
+
+        fig = go.Figure(go.Scatter(
+            x=list(dfplot['Month']),
+            y=list(dfplot['Subs']),
+            # name='Average Accepted Submissions',
+            # line=dict(color='royalblue', width=4, dash='dot')
+            # font=dict(color='royalblue'),
+            mode='lines+markers',
+            hovertemplate="<i>When?</i>   <b>%{x}</b>"+"<br><b><i>"+hola[int(caf)]+":</i></b> %{y:.2f}"
+        ))
+        fig.update_layout(
+            xaxis=dict(
+                showline=True,
+                showgrid=False,
+                showticklabels=True,
+                linecolor='rgb(204, 204, 204)',
+                linewidth=2,
+                ticks='outside',
+                tickfont=dict(
+                    family='Arial',
+                    size=15,
+                    color='white',
+                ),
             ),
-        ),
-        yaxis=dict(
-            showline=True,
-            showgrid=False,
-            showticklabels=True,
-            linecolor='rgb(204, 204, 204)',
-            linewidth=2,
-            ticks='outside',
-            tickfont=dict(
-                family='Arial',
-                size=15,
-                color='white',
+            yaxis=dict(
+                showline=True,
+                showgrid=False,
+                showticklabels=True,
+                linecolor='rgb(204, 204, 204)',
+                linewidth=2,
+                ticks='outside',
+                tickfont=dict(
+                    family='Arial',
+                    size=15,
+                    color='white',
+                ),
             ),
-        ),
-        plot_bgcolor='#222',
-        paper_bgcolor='#222'
-    )
+            plot_bgcolor='#222',
+            paper_bgcolor='#222'
+        )
 
-    return html.Div(dcc.Graph(figure=fig, id='fig_avg'))    
+        return html.Div(dcc.Graph(figure=fig, id='fig_avg'))    
 
 @app.callback(
     Output('popover', 'children'),
