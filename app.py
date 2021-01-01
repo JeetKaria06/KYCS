@@ -261,7 +261,7 @@ app.layout = html.Div(id='main', children=[
             dbc.ModalHeader("[ KYCS ] Python App"),
             dbc.ModalBody([
                 html.H3("What is this app about?"),
-                html.H5("This app lets you analyze your codeforces submissions and visualizing them in comman man's manner."),
+                html.H5("This app lets you analyze your codeforces submissions and visualizing them in common man's manner."),
                 html.H3("What makes it different than other apps/tools ?"),
                 html.H5("(i) Allows you to keep track of your average monthly submissions and even separating it on particular month."),
                 html.H5("(ii) Wordcloud makes one realize his/her go to domain for problem solving."),
